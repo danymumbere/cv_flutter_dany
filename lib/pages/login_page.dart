@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
+
+import '../services/api_service.dart';
 import 'main_shell.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,28 +13,46 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _loginCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   bool _masque = true;
+  bool _chargement = false;
 
   @override
   void dispose() {
-    _loginCtrl.dispose();
+    _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
   }
 
-  void _connecter() {
+  Future<void> _connecter() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_loginCtrl.text.trim() == kLogin && _passCtrl.text == kPassword) {
+    setState(() => _chargement = true);
+    try {
+      final compte =
+          await ApiService.login(_emailCtrl.text.trim(), _passCtrl.text);
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainShell()),
+        MaterialPageRoute(builder: (_) => MainShell(compte: compte)),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Identifiant ou mot de passe incorrect')),
-      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _chargement = false);
+    }
+  }
+
+  Future<void> _versInscription() async {
+    final email = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const RegisterPage()),
+    );
+    if (email != null) {
+      _emailCtrl.text = email;
+      _passCtrl.clear();
     }
   }
 
@@ -54,14 +74,19 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 28),
                 TextFormField(
-                  controller: _loginCtrl,
+                  controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    labelText: 'Identifiant',
+                    labelText: 'Identifiant (e-mail)',
                     prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Identifiant requis' : null,
+                  validator: (v) {
+                    final t = v?.trim() ?? '';
+                    if (t.isEmpty) return 'Identifiant requis';
+                    if (!t.contains('@')) return 'Adresse e-mail invalide';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -72,7 +97,8 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: const Icon(Icons.lock),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(_masque ? Icons.visibility : Icons.visibility_off),
+                      icon: Icon(
+                          _masque ? Icons.visibility : Icons.visibility_off),
                       onPressed: () => setState(() => _masque = !_masque),
                     ),
                   ),
@@ -84,9 +110,19 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 48,
                   child: FilledButton(
-                    onPressed: _connecter,
-                    child: const Text('Se connecter'),
+                    onPressed: _chargement ? null : _connecter,
+                    child: _chargement
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Se connecter'),
                   ),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: _chargement ? null : _versInscription,
+                  child: const Text('Pas de compte ? Créer un compte'),
                 ),
               ],
             ),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'family_page.dart';
+
+import '../models/account.dart';
 import 'contact_page.dart';
+import 'family_page.dart';
+import 'home_page.dart';
 import 'login_page.dart';
 
 class MainShell extends StatefulWidget {
-  const MainShell({super.key});
+  final Account compte;
+  const MainShell({super.key, required this.compte});
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -27,7 +30,14 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titres[_index]),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(_titres[_index]),
+            Text(widget.compte.email,
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: 'Se déconnecter',
@@ -42,8 +52,10 @@ class _MainShellState extends State<MainShell> {
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Accueil'),
-          NavigationDestination(icon: Icon(Icons.family_restroom), label: 'Famille'),
-          NavigationDestination(icon: Icon(Icons.contact_phone), label: 'Contact'),
+          NavigationDestination(
+              icon: Icon(Icons.family_restroom), label: 'Famille'),
+          NavigationDestination(
+              icon: Icon(Icons.contact_phone), label: 'Contact'),
         ],
       ),
     );

@@ -1,6 +1,3 @@
-const String kLogin = 'admin';
-const String kPassword = '1234';
-
 const String kNom = 'MUMBERE MAKELELE DANY';
 const String kTitre = 'Étudiant en Informatique – Développeur mobile, web et desktop (+ vibecodeur)';
 const String kPhoto = 'assets/images/moi.jpg';
@@ -32,17 +29,6 @@ const List<String> kLangues = [
 
 const List<String> kInterets = ['Programmation', 'Musique', 'Lecture', 'Youtube']; 
 
-class Membre {
-  final String nom, lien, profession, photo;
-  const Membre(this.nom, this.lien, this.profession, this.photo);
-}
-
-const List<Membre> kFamille = [
-  Membre('VINDU', 'Père', 'Médecin radiologue', 'assets/images/pere.jpg'), 
-  Membre('ALINE', 'Mère', 'pharmacienne', 'assets/images/mere.jpg'),
-  Membre('PATRICK', 'Frère', 'Etudiant à l\'ULPGL-Sciences informatiques', 'assets/images/frere.jpg'),
-  Membre('DEBORAH', 'Sœur', 'écolière', 'assets/images/soeur.jpg'),
-];
 
 // --- Contact ---
 const String kTelephone = '+243 906 25 30 50';

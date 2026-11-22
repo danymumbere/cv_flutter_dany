@@ -1,13 +1,27 @@
-# cv_flutter_dany
+## TP2 : Intégration de l'API REST
 
-Application mobile Flutter présentant mon CV, ma famille et mes coordonnées.
+L'application utilise désormais l'API PHP/MySQL [api-test](https://github.com/espoirbaraka/api-test) :
 
-## Fonctionnalités
-- **Connexion** : identifiant + mot de passe masqué (identifiants de démo : `admin` / `1234`)
-- **Accueil** : CV complet (photo, profil, formation, expériences, compétences, langues, centres d'intérêt)
-- **Famille** : liste des membres (nom, photo, lien de parenté, profession)
-- **Contact** : téléphone, e-mail, adresse, LinkedIn, GitHub (cliquables via `url_launcher`)
-- Navigation par `NavigationBar` (barre du bas)
+- **Authentification réelle** : création de compte (`POST /accounts/register`) et connexion (`POST /accounts/login`), plus aucun identifiant codé en dur.
+- **Famille (CRUD)** via `/famille-membres` :
+  - Lister et consulter (`GET /famille-membres`, `GET /famille-membres/{id}`)
+  - Ajouter, avec photo (`POST`, multipart/form-data)
+  - Modifier (`PUT` en JSON, ou `POST /famille-membres/{id}` pour changer la photo)
+  - Supprimer (`DELETE`)
+- Gestion des erreurs (réseau, 401, 409, 422) avec messages à l'écran, indicateurs de chargement, rafraîchissement par glissement.
+
+### Vidéo de démonstration
+
+▶️ **[Voir la démonstration](https://drive.google.com/file/d/1BE92jcUsYradXEOFTKKauagH1Z8z2wFn/view?usp=sharing)**
+
+(La vidéo montre : création de compte, connexion, ajout d'un membre avec photo, consultation, modification, suppression.)
+
+### Configuration
+1. Démarrer Apache et MySQL (XAMPP), importer `api.sql` dans la base `api` (voir le README de l'API).
+2. Régler l'adresse de l'API dans `lib/config.dart` (`10.0.2.2` pour l'émulateur Android, l'IP du PC pour un téléphone réel).
+3. `flutter pub get` puis `flutter run`.
+
+
 
 ## Captures d'écran
 
@@ -19,13 +33,6 @@ Application mobile Flutter présentant mon CV, ma famille et mes coordonnées.
 |:--:|:--:|
 | ![Famille](screenshots/03_famille.png) | ![Contact](screenshots/04_contact.png) |
 
-## Lancer le projet
-```bash
-git clone https://github.com/danymumbere/cv_flutter_dany.git
-cd cv_flutter_dany
-flutter pub get
-flutter run
-```
 
 ## Technologies
 Flutter, Dart, url_launcher, Material 3.

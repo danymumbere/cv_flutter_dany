@@ -4,7 +4,9 @@
   <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="tel"/></intent>
   <intent><action android:name="android.intent.action.VIEW"/><data android:scheme="mailto"/></intent>
 </queries>
+<uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:usesCleartextTraffic="true"
         android:label="cv_flutter_dany"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
